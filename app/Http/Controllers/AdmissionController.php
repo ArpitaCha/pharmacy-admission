@@ -17,6 +17,7 @@ use App\Models\Institute;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\ApplElgbExam;
+use App\Models\BusinessAddressDetails;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Schedule;
 use App\Models\Student;
@@ -285,6 +286,7 @@ class AdmissionController extends Controller
                 'is_active'      => 1,
                 'session_year'   => $sessionYear,
                 's_block' => $request->student_block,
+                'is_business' => $request->is_business,
 
                 's_bank_details' => $request->bank_details,
                 'pc_cert_no'     => $request->pc_cert_no,
@@ -319,6 +321,24 @@ class AdmissionController extends Controller
                     'exam_12th_percentage'  => $request->exam_12th_percentage,
                 ]
             );
+            if ($request->is_business == '1') {
+                BusinessAddressDetails::updateOrCreate(
+                    ['s_appl_form_num' => $s_appl_form_num],
+                    [
+                        'business_state_id'    => $request->business_state_id,
+                        'business_district_id'    => $request->business_district_id,
+                        'business_subdivision'       => $request->business_subdivision,
+                        'business_block'       => $request->business_block,
+                        'business_post_office'     => $request->business_post_office,
+                        'business_police_station'     => $request->business_police_station,
+                        'business_pin_code' => $request->business_pin_code,
+                        'business_address' => $request->business_address,
+                        'business_address_2' => $request->business_address_2
+
+                    ]
+                );
+            }
+
             if ($student->tab_type != 'submit') {
                 $tab_step   =    getStep($step);
                 $student->tab_type = $tab_step;

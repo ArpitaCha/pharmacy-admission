@@ -25,6 +25,7 @@ use App\Models\Subdivision;
 use App\Models\District;
 use App\Models\AuthPermission;
 use App\Models\AuthUrl;
+use App\Models\BusinessAddressDetails;
 use Illuminate\Support\Facades\Artisan;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Crypt;
@@ -83,6 +84,19 @@ class StudentController extends Controller
             $qualification = ApplElgbExam::with(['state10th', 'state12th', 'district10th', 'district12th', 'board12th', 'board10th'])
                 ->where('exam_appl_form_num', $form_num)
                 ->first();
+            $business_address = BusinessAddressDetails::with([
+                'state:state_id_pk,state_name',
+                'district:district_id_pk,district_name'
+            ])->where('s_appl_form_num', $form_num)->first();
+
+            if ($business_address && is_numeric($business_address->business_subdivision)) {
+                $business_address->load('subdivision:id,name');
+            }
+            if ($business_address && is_numeric($business_address->business_block)) {
+                // Step 2: Reload with block relation
+                $business_address->load('block:id,name');
+            }
+
             // dd($qualification);
             $profile_save = (bool)$check_student->is_personal_save;
             $status = $msg = $message = "";
@@ -276,7 +290,42 @@ class StudentController extends Controller
                 'exam_per_marks' => optional($qualification)->exam_per_marks
                     ? json_decode($qualification->exam_per_marks, true)
                     : [],
-                'type'  => $check_student->tab_type
+                'type'  => $check_student->tab_type,
+                'is_business' => $check_student->is_business,
+
+                'business_state' => [
+                    'state_id'   => $business_address->business_state_id ?? '',
+                    'state_name' => $business_address->state->state_name ?? '',
+                ],
+                'business_district' => [
+                    'district_id'   => $business_address->business_district_id ?? '',
+                    'district_name' => $business_address->district->district_name ?? '',
+                ],
+                'business_pin_no' => $business_address->business_pin_code ?? '',
+                'business_subdivision' => [
+                    'subdivision_id'   => ($business_address && is_numeric($business_address->business_subdivision))
+                        ? $business_address->business_subdivision
+                        : '',
+
+                    'subdivision_name' => ($business_address && is_numeric($business_address->business_subdivision))
+                        ? ($business_address->subdivision->name ?? '')
+                        : ($business_address->business_subdivision ?? ''),
+                ],
+
+                'business_block' => [
+                    'block_id'   => ($business_address && is_numeric($business_address->business_block))
+                        ? $business_address->business_block
+                        : '',
+
+                    'block_name' => ($business_address && is_numeric($business_address->business_block))
+                        ? ($business_address->block->name ?? '')
+                        : ($business_address->business_block ?? ''),
+                ],
+
+                'business_post_office' => $business_address->business_post_office ?? '',
+                'business_police_station' => $business_address->business_police_station ?? '',
+                'business_address' => $business_address->business_address ?? '',
+                'business_address_2' => $business_address->business_address_2 ?? ''
             ];
             return response()->json([
                 'error'     =>  false,
