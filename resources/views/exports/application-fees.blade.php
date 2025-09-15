@@ -149,8 +149,6 @@
         </div>
    
 
-
-
     </div>
     
 
@@ -272,7 +270,44 @@
             </tr>
         
     </table>
-   
+    @if($students->is_business == '1')
+   <table style="padding-top:10px;">
+                <tr>
+                    <th colspan="4" style="text-align:left; font-size:14px;">Business Address Details</th>
+                </tr>
+                <tr>
+                  <td><strong>Address</strong></td>
+                <td>{{ $students->s_address }}</td>
+                <td><strong>Post Office</strong></td>
+                <td>{{ $students->s_post_office }}</td>
+
+                </tr>
+
+            <tr>
+                 
+                <td><strong>Police Station</strong></td>
+                <td>{{ $students->s_police_station }}</td>
+                <td><strong>Block</strong></td>
+                <td>{{ $student_data['block']['name'] ?? 'N/A' }}</td>
+            </tr>
+            
+            
+            <tr>
+                 <td><strong>Sub-Division</strong></td>
+                <td>{{ $student_data['subdivision']['name'] ?? 'N/A' }}</td>
+                <td><strong>District</strong></td>
+                <td>{{ $students->district->district_name ?? 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td><strong>State</strong></td>
+                <td>{{ $students->state->state_name ?? 'N/A' }}</td>
+                <td><strong>PIN No.</strong></td>
+                <td>{{ $students->s_pin_no ?? 'N/A' }}</td>
+
+            </tr>
+        
+    </table>
+    @endif
     <table style="padding-top:10px;">
                 <tr>
                     <th colspan="3" style="text-align:left; font-size:14px;">Reservation/Quota Details</th>
@@ -477,7 +512,8 @@
                             {{-- Left side --}}
                             <td style="width:50%; text-align:left; vertical-align:middle; border:none; font-size:11px;">
                                 <strong>Place:</strong> {{ $students->s_address ?? 'N/A' }}<br>
-                                <strong>Date:</strong> {{ date('d-m-Y') }} 
+                              <strong>Date & Time:</strong> {{ date('d-m-Y H:i:s') }}
+
                             </td>
 
                             {{-- Right side --}}

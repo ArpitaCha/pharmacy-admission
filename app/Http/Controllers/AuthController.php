@@ -383,20 +383,20 @@ class AuthController extends Controller
                     //    / dd("else");
                     // Generate new application number
                     $year = date('Y');
-                    $lastStudent = Student::latest('s_id')->first();
+                    /* $lastStudent = Student::latest('s_id')->first();
                     if ($lastStudent && preg_match('/PHARM' . $year . '(\d+)/', $lastStudent->s_appl_form_num, $matches)) {
                         $nextNumber = (int)$matches[1] + 1;
                     } else {
                         $nextNumber = 1;
                     }
 
-                    $s_appl_form_num = 'PHARM' . $year . str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
+                    $s_appl_form_num = 'PHARM' . $year . str_pad($nextNumber, 6, '0', STR_PAD_LEFT); */
                     $defaultRoleId = 2; // or fetch dynamically if needed
 
 
 
                     $created = Student::create([
-                        's_appl_form_num' => $s_appl_form_num,
+                        # 's_appl_form_num' => $s_appl_form_num,
                         's_phone'         => $u_phone,
                         'u_role_id'       => $defaultRoleId,
                         's_citizenship'     => 'INDIAN',
@@ -405,6 +405,14 @@ class AuthController extends Controller
                         'tab_type'  =>  $tab_type
 
                     ]);
+
+                    $lastid = $created->s_id;
+                    $s_appl_form_num = 'PHARM' . $year . str_pad($lastid, 6, '0', STR_PAD_LEFT);
+                    $created->update([
+                        's_appl_form_num' => $s_appl_form_num
+                    ]);
+
+
                     $elgbExam = ApplElgbExam::create([
                         'exam_appl_form_num' => $s_appl_form_num,
                         'exam_elgb_code_one' => 'MADHYAMIK OR 10TH STANDARD OR EQUIVALENT',

@@ -337,6 +337,9 @@ class AdmissionController extends Controller
 
                     ]
                 );
+            } else {
+                // is_business == 0 → delete existing record
+                BusinessAddressDetails::where('s_appl_form_num', $s_appl_form_num)->delete();
             }
 
             if ($student->tab_type != 'submit') {

@@ -75,6 +75,7 @@ Route::middleware('auth.token')->group(function () {
         Route::post('/add-verifier', [AdmissionController::class, 'addVerifier']);
         Route::post('/update-verifier', [AdmissionController::class, 'updateVerifier']);
         Route::post('/inActive-verifier', [AdmissionController::class, 'inActiveVerifier']);
+        Route::post('/business-address', [AdmissionController::class, 'addressBusiness']);
         Route::get('/check-validation-fields/{role}', [AdmissionController::class, 'checkValidationFields'])->withoutMiddleware('auth.token');
 
         Route::post('/other-district-verifier', [AdmissionController::class, 'otherdistrictverifier']);
