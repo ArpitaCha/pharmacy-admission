@@ -1,18 +1,12 @@
 <?php
 
 use App\Http\Controllers\StudentController;
-use Barryvdh\DomPDF\Facade\Pdf;
-use App\Models\wbscte\Studentxi;
 use Illuminate\Support\Facades\DB;
-use App\Models\wbscte\AttendenceXi;
-use App\Models\wbscte\MarksEntryXi;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
-use App\Http\Controllers\wbscte\AuthController;
-use App\Http\Controllers\wbscte\OtherController;
-use App\Http\Controllers\wbscte\PaymentController;
-use App\Http\Controllers\wbscte\MgmtAdmissionController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PaymentController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -40,7 +34,7 @@ Route::get('/test-database', function () {
         die("Could not connect to the database. Error: " . $e->getMessage());
     }
 });
-Route::get('/admission-pdf/{appl_num}', [StudentController::class, 'downloadAdmissionForm']);
+
 
 
 Route::prefix('payment')->group(function () {

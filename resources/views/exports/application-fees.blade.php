@@ -84,19 +84,18 @@
     @if ($type === 'PREVIEW')
         <div
             style="
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) rotate(-30deg); /* center + rotate */
+        position:fixed ;
+        left:25%;
+        top:15%;
+        transform:rotate(-45);
         width: 80%;  
         height: 80%;  
         opacity: 0.1; 
         z-index: -1;
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        grid-template-rows: repeat(3, 1fr);    
-        justify-items: center;
-        align-items: center;
+        display: flex;
+        flex-direction:colum;
+        justify-content:center;
+        align-items:center:
         pointer-events: none;
         text-align: center;">
             @for ($i = 0; $i < 9; $i++)
@@ -385,50 +384,58 @@
                 <th colspan="8" style="text-align:left; font-size:14px;">Qualification Details</th>
             </tr>
             <tr>
-                <td style="text-align: center"><strong>Qualification(10th)</strong></td>
-                <td style="text-align: center"><strong>10th School Name</strong></td>
-                <td style="text-align: center"><strong>10th School District</strong></td>
-                <td style="text-align: center"><strong>10th Year of Passing</strong></td>
-                <td style="text-align: center"><strong> 10th Board</strong></td>
-                <td style="text-align: center"><strong>Aggregate Marks of 10th Standard</strong></td>
-                <td style="text-align: center"><strong>Marks Obtained in 10th Standard</strong></td>
-                <td style="text-align: center"><strong>Overall % </strong><span style="font-size:10px;">(Rounded off
+                <td style="text-align: center; font-size:12px  "><strong>Education Details of Madhyamik/Equivalent
+                        Examination</strong></td>
+                <td style="text-align: center; font-size:12px  "><strong>10th School Name</strong></td>
+                <td style="text-align: center; font-size:12px  "><strong>10th School District</strong></td>
+                <td style="text-align: center; font-size:12px  "><strong>10th Year of Passing</strong></td>
+                <td style="text-align: center; font-size:12px  "><strong> 10th Board</strong></td>
+                <td style="text-align: center; font-size:12px  "><strong>Aggregate Marks of 10th Standard</strong></td>
+                <td style="text-align: center; font-size:12px  "><strong>Marks Obtained in 10th Standard</strong></td>
+                <td style="text-align: center; font-size:12px  "><strong>Overall % </strong><span
+                        style="font-size:10px;">(Rounded off
                         upto 2 decimal places)</span></td>
             </tr>
 
             <tr>
-                <td style="text-align: center">{{ $education->exam_elgb_code_one }}</td>
-                <td style="text-align: center">{{ $education->exam_10th_school_name }}</td>
-                <td style="text-align: center">{{ $education->district10th->district_name ?? 'N/A' }}</td>
-                <td style="text-align: center">{{ $education->exam_10th_pass_yr }}</td>
-                <td style="text-align: center">{{ strtoupper($education->board10th->board_name) }}</td>
-                <td style="text-align: center">{{ $education->exam_10th_tot_marks ?? 'N/A' }}</td>
-                <td style="text-align: center">{{ $education->exam_10th_ob_marks ?? 'N/A' }}</td>
-                <td style="text-align: center">{{ $education->exam_10th_percentage ?? 'N/A' }}
+                <td style="text-align: center; font-size:12px  ">{{ $education->exam_elgb_code_one }}</td>
+                <td style="text-align: center; font-size:12px  ">{{ $education->exam_10th_school_name }}</td>
+                <td style="text-align: center; font-size:12px  ">{{ $education->district10th->district_name ?? 'N/A' }}
+                </td>
+                <td style="text-align: center; font-size:12px  ">{{ $education->exam_10th_pass_yr }}</td>
+                <td style="text-align: center; font-size:12px  ">{{ strtoupper($education->board10th->board_name) }}
+                </td>
+                <td style="text-align: center; font-size:12px  ">{{ $education->exam_10th_tot_marks ?? 'N/A' }}</td>
+                <td style="text-align: center; font-size:12px  ">{{ $education->exam_10th_ob_marks ?? 'N/A' }}</td>
+                <td style="text-align: center; font-size:12px  ">{{ $education->exam_10th_percentage ?? 'N/A' }}
 
                 </td>
             </tr>
             <tr>
-                <td style="text-align: center"><strong>Qualification(12th)</strong></td>
-                <td style="text-align: center"><strong>12th School Name</strong></td>
-                <td style="text-align: center"><strong>12th School District</strong></td>
-                <td style="text-align: center"><strong>12th Year of Passing</strong></td>
-                <td style="text-align: center"><strong> 12th Board</strong></td>
-                <td style="text-align: center"><strong>Aggregate Marks of 12th Standard</strong></td>
-                <td style="text-align: center"><strong>Marks Obtained in 12th Standard</strong></td>
-                <td style="text-align: center"><strong>Overall % </strong><span style="font-size:10px;">(Rounded off
+                <td style="text-align: center; font-size:12px  "><strong>Educational Details of Higher
+                        Secondary/Equivalent Examination</strong></td>
+                <td style="text-align: center; font-size:12px  "><strong>12th School Name</strong></td>
+                <td style="text-align: center; font-size:12px  "><strong>12th School District</strong></td>
+                <td style="text-align: center; font-size:12px  "><strong>12th Year of Passing</strong></td>
+                <td style="text-align: center; font-size:12px  "><strong> 12th Board</strong></td>
+                <td style="text-align: center; font-size:12px  "><strong>Aggregate Marks of 12th Standard</strong></td>
+                <td style="text-align: center; font-size:12px  "><strong>Marks Obtained in 12th Standard</strong></td>
+                <td style="text-align: center; font-size:12px  "><strong>Overall % </strong><span
+                        style="font-size:10px;">(Rounded off
                         upto 2 decimal places)</span></td>
             </tr>
 
             <tr>
-                <td style="text-align: center">{{ $education->exam_elgb_code_two }}</td>
-                <td style="text-align: center">{{ $education->exam_12th_school_name }}</td>
-                <td style="text-align: center">{{ $education->district12th->district_name ?? 'N/A' }}</td>
-                <td style="text-align: center">{{ $education->exam_12th_pass_yr }}</td>
-                <td style="text-align: center">{{ strtoupper($education->board12th->board_name) }}</td>
-                <td style="text-align: center">{{ $education->exam_12th_tot_marks ?? 'N/A' }}</td>
-                <td style="text-align: center">{{ $education->exam_12th_ob_marks ?? 'N/A' }}</td>
-                <td style="text-align: center">{{ $education->exam_12th_percentage ?? 'N/A' }}
+                <td style="text-align: center; font-size:12px  ">{{ $education->exam_elgb_code_two }}</td>
+                <td style="text-align: center; font-size:12px  ">{{ $education->exam_12th_school_name }}</td>
+                <td style="text-align: center; font-size:12px  ">{{ $education->district12th->district_name ?? 'N/A' }}
+                </td>
+                <td style="text-align: center; font-size:12px  ">{{ $education->exam_12th_pass_yr }}</td>
+                <td style="text-align: center; font-size:12px  ">{{ strtoupper($education->board12th->board_name) }}
+                </td>
+                <td style="text-align: center; font-size:12px  ">{{ $education->exam_12th_tot_marks ?? 'N/A' }}</td>
+                <td style="text-align: center; font-size:12px  ">{{ $education->exam_12th_ob_marks ?? 'N/A' }}</td>
+                <td style="text-align: center; font-size:12px  ">{{ $education->exam_12th_percentage ?? 'N/A' }}
                 </td>
             </tr>
 
