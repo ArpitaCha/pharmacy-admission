@@ -150,6 +150,10 @@ class StudentController extends Controller
             $student_bank_passbook_url = $check_student->s_bank_passbook_doc
                 ? URL::to("storage/{$check_student->s_bank_passbook_doc}")
                 : null;
+            $payment = PaymentTransaction::where([
+                'pmnt_modified_by' => $check_student->s_appl_form_num,
+                'pmnt_pay_type' => 'APPLICATION'
+            ])->first();
             $message = "Data fetched successfully";
             $data = [
                 'ageon' => env('CUTOFF_DATE', date('Y-m-d')),
@@ -297,6 +301,7 @@ class StudentController extends Controller
                     'state_id'   => $business_address->business_state_id ?? '',
                     'state_name' => $business_address->state->state_name ?? '',
                 ],
+                'business_name' => $business_address->business_name ?? '',
                 'business_district' => [
                     'district_id'   => $business_address->business_district_id ?? '',
                     'district_name' => $business_address->district->district_name ?? '',
@@ -325,7 +330,12 @@ class StudentController extends Controller
                 'business_post_office' => $business_address->business_post_office ?? '',
                 'business_police_station' => $business_address->business_police_station ?? '',
                 'business_address' => $business_address->business_address ?? '',
-                'business_address_2' => $business_address->business_address_2 ?? ''
+                'business_address_2' => $business_address->business_address_2 ?? '',
+                'payment_order_id' => $payment->order_id ?? '',
+                'payment_trans_amount' => $payment->trans_amount ?? '',
+                'payment_trans_id' => $payment->trans_id ?? '',
+                'payment_transaction_date' => $payment->trans_time ?? '',
+                'payment_status' => $payment->trans_status ?? ''
             ];
             return response()->json([
                 'error'     =>  false,
@@ -759,7 +769,13 @@ class StudentController extends Controller
             'state:state_id_pk,state_name',
             'district:district_id_pk,district_name'
         ])->where('s_appl_form_num', $form_num)->first();
+        
+        $business_details = BusinessAddressDetails::with([
+            'state:state_id_pk,state_name',
+            'district:district_id_pk,district_name'
+        ])->where('s_appl_form_num', $form_num)->first();
 
+        
         if ($students && is_numeric($students->s_subdivision)) {
             $students->load('subdivision:id,name');
         }
@@ -834,7 +850,8 @@ class StudentController extends Controller
             'qr_code' => base64_encode($qrcode),
             'student_data' => $student_data,
             'age' => $age,
-            'type' => $type
+            'type' => $type,
+            'business_details' => $business_details,
 
         ]);
         $pdf->setOption(['defaultFont' => 'sans-serif'])
@@ -853,7 +870,7 @@ class StudentController extends Controller
 
             $canvas->text($x, $y, $text, $font, $size);
         });
-        return $pdf->stream('poly1styr-' . $form_num . '.pdf');
+        return $pdf->stream('pharmacy-' . $form_num . '.pdf');
     }
 
     public function downloadAdmissionFeesExcel(Request $request)

@@ -60,18 +60,15 @@ class PaymentController extends Controller
             }
         }
         if ($student_data['is_kanyashree'] == 1 && $student_data['s_kanyashree']) {
-            // dd('gth');
+             dd("hjj");
             $total_appl_amount = Fees::where('cf_fees_type', 'APPLICATION')->where('cf_fees_code', 'APPLKAN')->first();
+          
         } else {
-            // dd("hyj");
-            $total_appl_amount = Fees::where('cf_fees_type', 'APPLICATION')->first();
+          
+            $total_appl_amount = Fees::where('cf_fees_type', 'APPLICATION')->where('cf_fees_code', 'APPLGENERAL')->first();
+           
         }
-        // dd("hjj");
-        // dd($total_appl_amount);
-        // Get fee amount
-        // $total_appl_amount = Fees::select('cf_fees_amount')
-        //     ->where('cf_fees_type', 'APPLICATION')
-        //     ->first();
+     
 
         if (!$total_appl_amount || $total_appl_amount->cf_fees_amount <= 0) {
             return response()->json([
@@ -81,9 +78,9 @@ class PaymentController extends Controller
         }
 
         $amount = $total_appl_amount->cf_fees_amount;
+       
         $other_data = "{$student_data['student_name']}_{$student_data['student_phn_no']}_{$student_data['student_payment_for']}_{$student_data['appl_form_num']}_{$student_data['session_year']}_{$amount}";
 
-        // Generate a random 10-character order ID
         $orderid = '';
         for ($i = 0; $i < 10; $i++) {
             $d = rand(1, 30) % 2;

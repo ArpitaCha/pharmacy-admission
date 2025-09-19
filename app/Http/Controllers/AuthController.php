@@ -406,7 +406,7 @@ class AuthController extends Controller
 
                     ]);
 
-                    $lastid = $created->s_id;
+                    $lastid = $created->getKey();
                     $s_appl_form_num = 'PHARM' . $year . str_pad($lastid, 6, '0', STR_PAD_LEFT);
                     $created->update([
                         's_appl_form_num' => $s_appl_form_num
@@ -435,6 +435,7 @@ class AuthController extends Controller
                     's_appl_form_num' => $s_appl_form_num,
                     'u_name' => $name,
                     'tab_type' =>  $tab_type,
+                    'ageon' => env('CUTOFF_DATE', date('Y-m-d')),
 
                 ];
 

@@ -43,6 +43,8 @@ class AdmissionController extends Controller
     */
     private function rulesStep1($request)
     {
+        //
+        # dd('X');
         $rules = [
             'student_first_name'     => ['required'],
             'student_father_name'    => ['required'],
@@ -54,19 +56,23 @@ class AdmissionController extends Controller
             'student_religion'       => ['required'],
             'student_citizenship'    => ['required'],
             'is_married'             => ['required'],
-            'student_phone'          => ['required', 'unique:register_student,s_phone'],
-            'student_email'          => ['required', 'email', 'unique:register_student,s_email'],
+            'student_phone'          => ['required'],
+            'student_email'          => ['required'],
             'student_aadhar_no'      => ['required'],
         ];
 
 
         $validator = Validator::make($request->all(), $rules);
-
+      
 
         $validator->after(function ($validator) use ($request) {
             // Aadhaar encryption uniqueness
             $enc_aadhaar_num = encryptHEXFormat($request->student_aadhar_no);
-            if (Student::where('s_aadhar_no', $enc_aadhaar_num)->exists()) {
+            $phone  =   $request->student_phone;
+            if (Student::where('s_aadhar_no', $enc_aadhaar_num)
+                ->where('s_phone', '!=', $phone)
+                ->exists()
+            ) {
                 $validator->errors()->add('student_aadhar_no', 'This Aadhaar number already exists.');
             }
 
@@ -78,8 +84,8 @@ class AdmissionController extends Controller
             $cutoffDate = env('CUTOFF_DATE', date('Y-m-d'));
             $cutoffTimestamp = strtotime($cutoffDate);
             $studentDob = strtotime($request->student_dob);
-            $studentAge = strtotime("+18 years", $studentDob);
-
+            $AGE_LIMIT  =  18;
+            $studentAge = strtotime("+$AGE_LIMIT years", $studentDob);
 
             if ($studentAge > $cutoffTimestamp) {
                 $validator->errors()->add(
@@ -88,6 +94,8 @@ class AdmissionController extends Controller
                 );
             }
         });
+
+
 
         return $validator;
     }
@@ -159,16 +167,30 @@ class AdmissionController extends Controller
 
     private function rulesStep5($request)
     {
+        // $rules = [
+        //     'is_pwd'                        => ['required'],
+        //     'student_photo'                 => ['required', 'file'],
+        //     'student_sign'                  => ['required', 'file'],
+        //     'student_aadhar_document'       => ['required', 'file'],
+        //     'student_age_proof_document'    => ['required', 'file'],
+        //     'student_10th_marksheet_document' => ['required', 'file'],
+        //     'student_12th_marksheet_document' => ['required', 'file'],
+        //     // conditional validations will be added later
+        // ];
         $rules = [
-            'is_pwd'                        => ['required'],
-            'student_photo'                 => ['required', 'file'],
-            'student_sign'                  => ['required', 'file'],
-            'student_aadhar_document'       => ['required', 'file'],
-            'student_age_proof_document'    => ['required', 'file'],
-            'student_10th_marksheet_document' => ['required', 'file'],
-            'student_12th_marksheet_document' => ['required', 'file'],
-            // conditional validations will be added later
+            'is_pwd' => ['required'],
+
+            // Max 50 KB (image & sign)
+            'student_photo' => ['required', 'file', 'mimes:jpg,jpeg,png', 'max:50'],
+            'student_sign'  => ['required', 'file', 'mimes:jpg,jpeg,png', 'max:50'],
+
+            // Max 2 MB (documents)
+            'student_aadhar_document'        => ['required', 'file', 'mimes:pdf', 'max:2048'],
+            'student_age_proof_document'     => ['required', 'file', 'mimes:pdf', 'max:2048'],
+            'student_10th_marksheet_document' => ['required', 'file', 'mimes:pdf', 'max:2048'],
+            'student_12th_marksheet_document' => ['required', 'file', 'mimes:pdf', 'max:2048'],
         ];
+
         $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
@@ -207,11 +229,21 @@ class AdmissionController extends Controller
         try {
             // Step type
             $step = $request->type; // personalDetails, addressDetails, etc.
-
+            #  die('a');
             // Pick rules
             switch ($step) {
                 case 'personalDetails':
+                    #   die('p');
                     $rules = $this->rulesStep1($request);
+
+                    # dd($rules);
+                    if ($rules->fails()) {
+                        return response()->json([
+                            'status'  => 'error',
+                            'message' => $rules->errors()->first(),
+                            'errors'  => $rules->errors()
+                        ], 422); // 422 = Unprocessable Entity (standard for validation errors)
+                    }
                     break;
                 case 'addressDetails':
                     $rules = $this->rulesStep2($request);
@@ -227,6 +259,8 @@ class AdmissionController extends Controller
                     break; */
                 case 'submit':
                     $rules = $this->rulesStep5($request);
+
+
                     break;
             }
 
@@ -333,7 +367,8 @@ class AdmissionController extends Controller
                         'business_police_station'     => $request->business_police_station,
                         'business_pin_code' => $request->business_pin_code,
                         'business_address' => $request->business_address,
-                        'business_address_2' => $request->business_address_2
+                        'business_address_2' => $request->business_address_2,
+                        'business_name' => $request->business_name
 
                     ]
                 );
@@ -357,7 +392,7 @@ class AdmissionController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Application submitted successfully',
+                'message' => $tab_step == 'submit' ? 'Application submitted successfully' : 'Draft Saved Successfully',
                 'is_profile_updated' => (bool)$student->is_personal_save,
                 'tab_type'  =>  $tab_step
             ], 200);
